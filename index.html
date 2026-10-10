@@ -14,7 +14,7 @@ main{max-width:1280px;margin:0 auto;padding:18px 16px 28px}
 h1 small{font-size:12px;font-weight:400;color:var(--mut);margin-left:4px}
 .kpi b{color:var(--acc)}th{background:color-mix(in srgb,var(--ink) 5%,var(--pn))}
 .pn>h2{padding-bottom:8px;border-bottom:1px solid var(--ln);margin-bottom:10px}
-.btn{background:var(--acc);color:#fff}.btn:hover,.btn:focus-within{background:var(--ink);border-color:var(--ink);color:var(--pn)}
+.btn{background:var(--acc);color:var(--pn)}.btn:hover,.btn:focus-within{background:var(--ink);border-color:var(--ink);color:var(--pn)}
 header{display:flex;flex-wrap:wrap;gap:12px;align-items:end;justify-content:space-between;margin-bottom:14px}
 h1{font-size:20px;margin:0;font-weight:600;line-height:1.25}h2{font-size:15px;margin:0 0 8px;font-weight:600}
 .sub{color:var(--mut);font-size:13px}
@@ -115,7 +115,7 @@ function render(){
 function rank(d){const p=$('rk');if(!d.multi){p.innerHTML='<h2>Agent ranking</h2><div class="sub">This file covers one day. Upload the full month file to rank agents (attendance target: '+TG.days+' days).</div>';return}
  const R=[...d.L].sort((a,b)=>b.score-a.score),ck=(ok,t)=>'<td class="'+(ok?'':'bad')+'">'+(ok?'&#10003; ':'&#10007; ')+t+'</td>',W=TG.w;
  p.innerHTML='<h2>Agent ranking</h2><div class="tw"><table><thead><tr><th>Rank</th><th>Agent</th><th>Score /100</th><th>Avg talk (max '+F(TG.ahtMax)+')</th><th>Break/day (max '+TG.brkMax+' min)</th><th>Days (min '+TG.days+')</th><th>Inbound calls</th><th>Logins/day (max '+TG.sessFull+')</th></tr></thead><tbody>'+R.map((a,i)=>'<tr style="cursor:default"><td>'+(i+1)+'</td><td>'+E(a.n)+(i?'':' <b class="warn">Top performer</b>')+'</td><td><b>'+a.score.toFixed(1)+'</b></td>'+ck(a.ok[0],a.aht?F(a.aht):'-')+ck(a.ok[1],F(a.brkD))+ck(a.ok[2],a.days.size)+ck(a.ok[3],a.inn)+ck(a.ok[4],a.sessD.toFixed(1))+'</tr>').join('')+'</tbody></table></div><div class="note">Score out of 100: calls received '+W.calls+' (relative to the top agent), avg talk time '+W.aht+', break '+W.brk+' (full marks up to '+TG.brkFull+' min a day), attendance '+W.att+', stable login '+W.log+'. The inbound tick goes to the agent with the most calls.</div>'}
-const FBCFG={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT",appId:"YOUR_APP_ID"},FB=!!FBCFG,DEMO=false;
+const FBCFG={apiKey:"AIzaSyBLuemKDEGzDMG8HFj_h5peQZ-MVBs1748",authDomain:"call-centre-dashboard-95667.firebaseapp.com",projectId:"call-centre-dashboard-95667",appId:"1:906058929536:web:31c2cdce082c08e3521d65"},FB=!!FBCFG,DEMO=false;
 const J=x=>JSON.parse(JSON.stringify(x)),LS={g:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const {w:_w,...TG0}=TG,DP={theme:'auto',accent:'#2B4A9B',fs:14,dense:0,show:{rank:1,charts:1,alerts:1,table:1}},DO={title:'Callcenter Dashboard',tg:J(TG0),w:J(TG.w),emp:CE.join('\n'),skills:[...CORE].join('\n')};
 let ME=null,PF=J(DP),OS=J(DO),fb={},tab='ap';
@@ -167,7 +167,8 @@ $('gear').onclick=()=>{tab='ap';stR();document.body.classList.add('so')};$('bd')
 async function enter(u){ME=u;try{const o=await AUTH.org();if(o)OS={...J(DO),...o,tg:{...DO.tg,...o.tg},w:{...DO.w,...o.w}}}catch(e){}
  PF={...J(DP),...(LS.g('pref')||{})};PF.show={...DP.show,...PF.show};ap();document.body.classList.remove('auth');$('me').textContent=u.name+' ('+u.role+')';
  if(DEMO&&!FB&&EMB)go(EMB,'base64','sample');else if(!D)$('kpi').innerHTML='<div class="em">Upload the daily Excel file to see the dashboard.</div>'}
-$('lgf').onsubmit=async e=>{e.preventDefault();$('lgm').textContent='';try{await enter(await AUTH.login($('lge').value.trim(),$('lgp').value))}catch(x){$('lgm').textContent=x.code?'Wrong email or password':x.message}};
+const em=x=>{const c=x.code||'';return /invalid-credential|wrong-password|user-not-found|invalid-email/.test(c)?'Wrong email or password':c==='permission-denied'?'Signed in, but the database rules blocked your profile. Check the rules and the users document (SETUP.md steps 2 and 3).':c==='auth/unauthorized-domain'?'This website address is not allowed. Add it in Authentication > Settings > Authorized domains.':c==='auth/operation-not-allowed'?'Email/Password sign-in is not turned on in Firebase.':c?'Error: '+c:x.message};
+$('lgf').onsubmit=async e=>{e.preventDefault();$('lgm').textContent='';try{await enter(await AUTH.login($('lge').value.trim(),$('lgp').value))}catch(x){$('lgm').textContent=em(x)}};
 $('sout').onclick=async()=>{await AUTH.out();ME=null;D=null;WB=null;document.body.classList.remove('so');document.body.classList.add('auth');$('lgp').value=''};
 async function boot(){document.body.classList.add('auth');if(!FB)$('lgh').textContent='Demo mode, passwords are not secure. Admin: admin@demo / admin123. User: user@demo / user123.';
  else if(/YOUR_/.test(JSON.stringify(FBCFG))){$('lgm').textContent='Firebase is not set up yet. Fill FBCFG in index.html (see SETUP.md).';return}
