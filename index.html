@@ -786,7 +786,7 @@ function srHtml(c){const L=c.rows();c.M=L.filter(z=>srM(c,z));if(c.sort)c.M.sort
  return'<div class="pn"><h3>'+c.title+'</h3><div class="rw"><label>All fields<input id="'+c.id+'_q" value="'+E(c.Q.q||'')+'" placeholder="any word, anywhere" autocomplete="off" style="min-width:240px"></label><button class="pri" data-sb="'+c.id+'">Search</button><button class="sec" data-sb="'+c.id+'-clr">Clear all</button></div>'
  +'<div class="mut" id="'+c.id+'_cnt" style="margin:4px 0">'+srCnt(c,L)+'</div>'+(L.length?'':c.none)+dl
  +'<div class="tw"><table><thead><tr>'+c.cols.map(x=>'<th>'+x[1]+'</th>').join('')+'</tr>'+fr2+'</thead><tbody id="'+c.id+'_body">'+srBody(c)+'</tbody></table></div><div id="'+c.id+'_ext">'+(c.M.length?c.extra(c.M):'')+'</div></div>'}
-function tkSearch(){return ''}function qaSearch(){return ''}/* search boxes are switched off for now; return srHtml(TKC) / srHtml(QAC) here to bring them back */
+function tkSearch(){return srHtml(TKC)}function qaSearch(){return ''}/* QA search is switched off for now; return srHtml(QAC) from qaSearch to bring it back */
 const srGet=c=>c.F.forEach(f=>{const e=$(c.id+'_'+f.k);if(e)c.Q[f.k]=e.value});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sb]');if(b){const k=b.dataset.sb,c=SRC[k.replace('-clr','')];if(k.endsWith('-clr'))c.F.forEach(f=>c.Q[f.k]='');else srGet(c);render();return}
  const r=e.target.closest&&e.target.closest('tr[data-sr]');if(r){const c=SRC[r.dataset.sr],z=c.M&&c.M[+r.dataset.i];if(z)modal(c.detail(z))}});
